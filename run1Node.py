@@ -155,7 +155,7 @@ if __name__ == '__main__':
     result_dir = prepare_result_directory(result_name)  # name + time stamp
 
     # simulation timesteps
-    (offset, length) = (2000, 1*24)  # time step selection
+    (offset, length) = (1, 7265)  # time step selection
     timesteps = range(offset, offset+length+1)
 
     # plotting timesteps
@@ -175,10 +175,8 @@ if __name__ == '__main__':
         urbs.COLORS[country] = color
 
     # select scenarios to be run
-    scenarios = [
-        cookbook.scenario_generator_wacc('low', 0.01),
-        cookbook.scenario_generator_wacc('mid', 0.05),
-        cookbook.scenario_generator_wacc('high', 0.1)]
+    scenarios = cookbook.scen_1d_paramvar(cookbook.scen_geothprice, 
+            'Grid', 5, 25, 10)
 
     for scenario in scenarios:
         prob = run_scenario(input_file, timesteps, scenario,

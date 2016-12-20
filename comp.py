@@ -102,7 +102,7 @@ def compare_scenarios(result_files, output_filename):
     costs.columns = costs.columns.droplevel(1)
     costs.index.name = 'Cost type'
     costs = costs.sort_index().transpose()
-    costs = costs / 1e9
+    costs = costs / 1e6
     
     # sum up created energy over all locations, but keeping scenarios (level=0)
     # make index name 'Commodity' nicer for plot
@@ -112,7 +112,7 @@ def compare_scenarios(result_files, output_filename):
     esums.index.name = 'Commodity'
     used_commodities = (esums.sum(axis=1) > 0)
     esums = esums[used_commodities].sort_index().transpose()
-    esums = esums / 1e3
+    # esums = esums / 1e3
     
     # PLOT
     
@@ -153,8 +153,8 @@ def compare_scenarios(result_files, output_filename):
         plt.setp(lg.get_patches(), edgecolor=urbs.to_color('Decoration'),
                  linewidth=0.15)
     
-    ax0.set_xlabel('Total costs (1e9 EUR/a)')
-    ax1.set_xlabel('Total energy produced (GWh)')
+    ax0.set_xlabel('Total costs (1e6 EUR/a)')
+    ax1.set_xlabel('Total energy produced (MWh)')
     
     for ext in ['png', 'pdf']:
         fig.savefig('{}.{}'.format(output_filename, ext),

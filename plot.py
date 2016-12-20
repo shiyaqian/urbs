@@ -115,21 +115,20 @@ def compare_scenarios(result_files, output_filename):
     esums = esums / 1e3
     
     # PLOT
-    
-    fig=
-    
-    fig = plt.figure(figsize=(20, 8))
-    gs = gridspec.GridSpec(1, 2, width_ratios=[2, 3])
+
+    fig = plt.figure(figsize=(20, 15))
+    gs = gridspec.GridSpec(1, 2, width_ratios=[3, 3])
     
     ax0 = plt.subplot(gs[0])
-    bp0 = costs.plot(ax=ax0, kind='barh', stacked=True)
+    bp0 = costs.plot(ax=ax0, kind='bar', stacked=True)
     
     ax1 = plt.subplot(gs[1])
     esums_colors = [urbs.to_color(commodity) for commodity in esums.columns]
-    bp1 = esums.plot(ax=ax1, kind='barh', stacked=True, color=esums_colors)
+    bp1 = esums.plot(ax=ax1, kind='bar', stacked=True, color=esums_colors)
     
     # remove scenario names from second plot
-    ax1.set_yticklabels('')
+    ax1.set_xticklabels('')
+    ax1.set_xticklabels('')
     
     # make bar plot edges lighter
     for bp in [bp0, bp1]:
@@ -139,7 +138,7 @@ def compare_scenarios(result_files, output_filename):
     # set limits and ticks for both axes
     for ax in [ax0, ax1]:
         plt.setp(list(ax.spines.values()), color=urbs.to_color('Grid'))
-        ax.yaxis.grid(False)
+        ax.yaxis.grid(True, 'major', color=urbs.to_color('Grid'), linestyle='-')
         ax.xaxis.grid(True, 'major', color=urbs.to_color('Grid'), linestyle='-')
         ax.xaxis.set_ticks_position('none')
         ax.yaxis.set_ticks_position('none')
@@ -149,14 +148,17 @@ def compare_scenarios(result_files, output_filename):
         ax.xaxis.set_major_formatter(group_thousands)
     
         # legend
-        lg = ax.legend(frameon=False, loc='upper center',
+        lg = ax.legend(frameon=True, loc='upper center',
                        ncol=4,
                        bbox_to_anchor=(0.5, 1.11))
         plt.setp(lg.get_patches(), edgecolor=urbs.to_color('Decoration'),
                  linewidth=0.15)
     
-    ax0.set_xlabel('Total costs (Mio. EUR/a)')
-    ax1.set_xlabel('Total energy produced (GWh)')
+    ax0.set_ylabel('Total costs by type (Mio. EUR/a)')
+    ax1.set_ylabel('Total energy production by process (GWh/a)')
+    
+    ax0.set_xlabel('Geothermal costs (EUR/MWh)')
+    ax1.set_xlabel('Geothermal costs (EUR/MWh)')
     
     for ext in ['png', 'pdf']:
         fig.savefig('{}.{}'.format(output_filename, ext),
