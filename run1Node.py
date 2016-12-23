@@ -8,68 +8,6 @@ from datetime import datetime
 from pyomo.opt.base import SolverFactory
 
 
-# SCENARIOS
-def scenario_base(data):
-    # do nothing
-    return data
-
-
-# def scenario_stock_prices(data):
-    #change stock commodity prices
-    # co = data['commodity']
-    # stock_commodities_only = (co.index.get_level_values('Type') == 'Stock')
-    # co.loc[stock_commodities_only, 'price'] *= 1.5
-    # return data
-
-
-def scenario_co2_limit(data):
-   #change global CO2 limit
-    hacks = data['hacks']
-    hacks.loc['Global CO2 limit', 'Value'] = 30000
-    return data
-
-
-def scenario_co2_price_low(data):
-   #change CO2 price
-    co = data['commodity']
-    co.loc[('Campus', 'CO2', 'Env'), 'price'] = 5
-    return data
-	
-def scenario_co2_price_high(data):
-   #change CO2 price
-    co = data['commodity']
-    co.loc[('Campus', 'CO2', 'Env'), 'price'] = 150
-    return data
-	
-def scenario_co2_price_veryhigh(data):
-   #change CO2 price
-    co = data['commodity']
-    co.loc[('Campus', 'CO2', 'Env'), 'price'] = 1000
-    return data
-
-
-# def scenario_north_process_caps(data):
-    #change maximum installable capacity
-    # pro = data['process']
-    # pro.loc[('North', 'Hydro plant'), 'cap-up'] *= 0.5
-    # pro.loc[('North', 'Biomass plant'), 'cap-up'] *= 0.25
-    # return data
-
-
-# def scenario_no_dsm(data):
-    #empty the DSM dataframe completely
-    # data['dsm'] = pd.DataFrame()
-    # return data
-
-
-# def scenario_all_together(data):
-    #combine all other scenarios
-    # data = scenario_stock_prices(data)
-    # data = scenario_co2_limit(data)
-    # data = scenario_north_process_caps(data)
-    # return data
-
-
 def prepare_result_directory(result_name):
     """ create a time stamped directory within the result folder """
     # timestamp for result directory
@@ -140,7 +78,7 @@ def run_scenario(input_file, timesteps, scenario, result_dir, plot_periods={}):
     urbs.report(
         prob,
         os.path.join(result_dir, '{}.xlsx').format(sce),
-        prob.com_demand, prob.sit)
+        prob.com_demand | prob.com_env, ['Campus'])
 
     urbs.result_figures(
         prob,
@@ -155,15 +93,15 @@ if __name__ == '__main__':
     result_dir = prepare_result_directory(result_name)  # name + time stamp
 
     # simulation timesteps
-    (offset, length) = (1, 7265)  # time step selection
+    (offset, length) = (1, 7260)  # time step selection
     timesteps = range(offset, offset+length+1)
 
     # plotting timesteps
     periods = {
-        #'spr': range(1000, 1000+24*7),
-        #'sum': range(3000, 3000+24*7),
-        #'aut': range(2000, 5000+24*7),
-        #'win': range(7000, 7000+24*7),
+        'spr': range(1000, 1000+24*7),
+        'sum': range(3000, 3000+24*7),
+        'aut': range(5000, 5000+24*7),
+        'win': range(7000, 7000+24*7)
     }
 
     # add or change plot colors
@@ -175,8 +113,8 @@ if __name__ == '__main__':
         urbs.COLORS[country] = color
 
     # select scenarios to be run
-    scenarios = cookbook.scen_1d_paramvar(cookbook.scen_geothprice, 
-            'Grid', 5, 25, 10)
+    scenarios = cookbook.scen_2d_paramvar(cookbook.scen_chppropagsprice, 
+            'Gas plant', 0.25, 0.55, 3, 'Campus', 20, 100, 3)
 
     for scenario in scenarios:
         prob = run_scenario(input_file, timesteps, scenario,
