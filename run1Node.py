@@ -113,8 +113,8 @@ if __name__ == '__main__':
         urbs.COLORS[country] = color
 
     # select scenarios to be run
-    scenarios = cookbook.scen_2d_paramvar(cookbook.scen_chppropagsprice, 
-            'Gas plant', 0.25, 0.55, 3, 'Campus', 20, 100, 3)
+    scenarios = cookbook.scen_2d_linlog10paramvar(cookbook.scen_chppropco2price, 
+            'Gas plant', 0.25, 0.55, 3, 'Campus', 1, 3, 3)
 
     for scenario in scenarios:
         prob = run_scenario(input_file, timesteps, scenario,

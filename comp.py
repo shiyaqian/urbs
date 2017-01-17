@@ -181,10 +181,10 @@ def compare_scenarios(result_files, output_filename):
     # single column 'Storage retreived' into two columns, one for each
     # commodity, allows for separate styling (i.e. legend entries).
     sto_sums = sto_sums = pd.concat([sto_sums, sto_sums], axis=1)
-    sto_sums.columns = ['Battery', 'Reservoir']
+    sto_sums.columns = ['Ice Storage', 'Reservoir']
     sto_sums = sto_sums.sort_index()
-    sto_sums.loc[(slice(None), 'Elec'), 'Reservoir'] = 0
-    sto_sums.loc[(slice(None), 'Heat'), 'Battery'] = 0
+    sto_sums.loc[(slice(None), 'Cold'), 'Reservoir'] = 0
+    sto_sums.loc[(slice(None), 'Heat'), 'Ice Storage'] = 0
     sto_sums = sto_sums.sort_index(ascending=[False, True])
     
     # remove CO2 from bar charts
@@ -276,7 +276,7 @@ if __name__ == '__main__':
     
     # add or change plot colors
     my_colors = {
-        'Battery': (100, 160, 200),
+        'Ice Storage': (100, 160, 200),
         'Demand': (0, 0, 0),
         'Gas Plant': (218, 215, 203),
         'Heat changer': (218, 215, 203),

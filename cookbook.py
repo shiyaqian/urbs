@@ -72,7 +72,7 @@ def scen_chpprop(process, Eleceff):
                 0.85 - Eleceff)
         return data
 
-    scenario.__name__ = 'scenario_CHP-elec-' + '{:04}'.format(value)
+    scenario.__name__ = 'scenario_CHP-elec-' + '{:04.4f}'.format(value)
     # used for result filenames
     return scenario
 
@@ -122,7 +122,7 @@ def scen_gasco2price(site1, site2, value1, value2):
     return scenario
 
 
-def scen_chppropagsprice(process, site, value1, value2):
+def scen_chppropgasprice(process, site, value1, value2):
     # scenario_name_suffix, site = string, value = float
 
     def scenario(data):
@@ -131,8 +131,23 @@ def scen_chppropagsprice(process, site, value1, value2):
         data['commodity'].loc[(site, 'Gas', 'Stock'), 'price'] = value2
         return data
 
-    scenario.__name__ = ('scenario_CHP-ElecEff-' + '{:04}'.format(value1) + 
+    scenario.__name__ = ('scenario_CHP-ElecEff-' + '{:04,4f}'.format(value1) + 
             '-Gas-price-' + '{:04}'.format(value2))
+    # used for result filenames
+    return scenario
+
+
+def scen_chppropco2price(process, site, eleceff, co2price):
+    # scenario_name_suffix, site = string, value = float
+
+    def scenario(data):
+        data['process_commodity'].loc[(process, 'Elec', 'Out'), 'ratio'] = (
+                eleceff)
+        data['commodity'].loc[(site, 'CO2', 'Env'), 'price'] = co2price
+        return data
+
+    scenario.__name__ = ('scenario_ElecEff-' + '{:04.4f}'.format(eleceff) +
+            '-co2-price-' + '{:04}'.format(co2price))
     # used for result filenames
     return scenario
 
@@ -174,11 +189,25 @@ def scen_2d_paramvar(scen_param, prop1, min1, max1, steps1,
 
 def scen_2d_log10paramvar(scen_param, prop1, min1, max1, steps1,
         prop2, min2, max2, steps2):
+    # Careful! Use exponent for min and max values.
 
     scenario_list = []
 
     for index2 in np.logspace(min2, max2, steps2):
         for index1 in np.logspace(min1, max1, steps1):
+            scenario_list.append(scen_param(prop1, prop2, index1, index2))
+    
+    return scenario_list
+
+
+def scen_2d_linlog10paramvar(scen_param, prop1, min1, max1, steps1,
+        prop2, min2, max2, steps2):
+    # Careful! Use exponent for min and max values.
+
+    scenario_list = []
+
+    for index2 in np.logspace(min2, max2, steps2):
+        for index1 in np.linspace(min1, max1, steps1):
             scenario_list.append(scen_param(prop1, prop2, index1, index2))
     
     return scenario_list
