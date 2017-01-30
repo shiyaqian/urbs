@@ -79,13 +79,13 @@ def run_scenario(input_file, timesteps, scenario, result_dir,
     shutil.copyfile(input_file, os.path.join(result_dir, input_file))
     
     # save problem solution (and input data) to HDF5 file
-    urbs.save(prob, os.path.join(result_dir, '{}.h5'.format(sce)))
+    # urbs.save(prob, os.path.join(result_dir, '{}.h5'.format(sce)))
 
     # write report to spreadsheet
     urbs.report(
         prob,
         os.path.join(result_dir, '{}.xlsx').format(sce),
-        prob.com_demand | prob.com_env, ['Campus'])
+        report_tuples=report_tuples)
 
     # result plots
     urbs.result_figures(
@@ -103,36 +103,26 @@ if __name__ == '__main__':
     result_dir = prepare_result_directory(result_name)  # name + time stamp
 
     # simulation timesteps
-<<<<<<< HEAD:run1Node.py
-    (offset, length) = (1, 7260)  # time step selection
-=======
-    (offset, length) = (3500, 168) # time step selection
->>>>>>> master:runme.py
+    (offset, length) = (1000, 7*24)  # time step selection
     timesteps = range(offset, offset+length+1)
 
     # plotting commodities/sites
     plot_tuples = [
-        ('North', 'Elec'),
-        ('Mid', 'Elec'),
-        ('South', 'Elec'),
-        (['North', 'Mid', 'South'], 'Elec')]
+        ('Campus', 'Elec'),
+        ('Campus', 'Heat'),
+        ('Campus', 'Cold')
+    ]
 
     # detailed reporting commodity/sites
     report_tuples = [
-        ('North', 'Elec'), ('Mid', 'Elec'), ('South', 'Elec'),
-        ('North', 'CO2'), ('Mid', 'CO2'), ('South', 'CO2')]
+        ('Campus', 'Elec'), ('Campus', 'Heat'), ('Campus', 'Cold')]
 
     # plotting timesteps
-<<<<<<< HEAD:run1Node.py
-    periods = {
+    plot_periods = {
         'spr': range(1000, 1000+24*7),
         'sum': range(3000, 3000+24*7),
         'aut': range(5000, 5000+24*7),
         'win': range(7000, 7000+24*7)
-=======
-    plot_periods = {
-        'all': timesteps[1:]
->>>>>>> master:runme.py
     }
 
     # add or change plot colors
@@ -145,7 +135,7 @@ if __name__ == '__main__':
 
     # select scenarios to be run
     scenarios = cookbook.scen_2d_linlog10paramvar(cookbook.scen_chppropco2price, 
-            'Gas plant', 0.25, 0.55, 3, 'Campus', 1, 3, 3)
+            'Gas plant', 0.25, 0.55, 2, 'Campus', 1, 3, 2)
 
     for scenario in scenarios:
         prob = run_scenario(input_file, timesteps, scenario, result_dir,

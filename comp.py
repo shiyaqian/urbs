@@ -159,8 +159,8 @@ def compare_scenarios(result_files, output_filename):
     earnt = costs.loc[:, costs.sum() < 0]
     
     # sum up created energy over all locations, but keeping scenarios (level=0)
-    created  =   esums.loc['Created'].rename(columns=lambda x:x.replace('.Campus','')).T
-    consumed = - esums.loc['Consumed'].rename(columns=lambda x:x.replace('.Campus','')).T.drop('Demand', axis=1)
+    created  =   esums.loc['Created'].rename(columns=lambda x:x.replace('Campus.','')).T
+    consumed = - esums.loc['Consumed'].rename(columns=lambda x:x.replace('Campus.','')).T.drop('Demand', axis=1)
     
     created = created.loc[:, created.sum() > 0.1] / 1e3
     consumed = consumed.loc[:, consumed.sum() < - 0.1] / 1e3
@@ -170,7 +170,7 @@ def compare_scenarios(result_files, output_filename):
     
     sto_sums = esums.loc[('Storage', 'Retrieved')].sort_index()
     #sto_sums = sto_sums.unstack()
-    sto_sums = sto_sums.rename(index=lambda x:x.replace('.Campus',''))
+    sto_sums = sto_sums.rename(index=lambda x:x.replace('Campus.',''))
     sto_sums = sto_sums / 1e3
 
     # hack to make this data conform to the same structure as the DataFrames
