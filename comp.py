@@ -111,8 +111,8 @@ def compare_scenarios(result_files, output_filename):
     # find base scenario and put at first position
     try:
         base_scenario = scenario_names.index('base')
-        result_files.insert(0, result_files.pop(base_scenario))
-        scenario_names.insert(0, scenario_names.pop(base_scenario))
+        result_files.append(result_files.pop(base_scenario))
+        scenario_names.append(scenario_names.pop(base_scenario))
     except ValueError:
         pass # do nothing if no base scenario is found
     
@@ -131,10 +131,10 @@ def compare_scenarios(result_files, output_filename):
             # repair broken MultiIndex in the first column
             esum.reset_index(inplace=True)
             esum.fillna(method='ffill', inplace=True)
-            esum.set_index(['index', 'pro'], inplace=True)
+            esum.set_index(['level_0', 'level_1'], inplace=True)
             
             cap = cap['Total'].loc['Campus']
-            
+
             costs.append(cost)
             esums.append(esum)
             caps.append(cap)
@@ -153,6 +153,8 @@ def compare_scenarios(result_files, output_filename):
     costs.columns = costs.columns.droplevel(1)
     costs.index.name = 'Cost type'
     costs = costs.sort_index().transpose()
+
+    costs = costs / 1e6
     spent = costs.loc[:, costs.sum() > 0]
     earnt = costs.loc[:, costs.sum() < 0]
     
@@ -316,4 +318,4 @@ if __name__ == '__main__':
         # specify comparison result filename 
         # and run the comparison function
         comp_filename = os.path.join(directory, 'comparison')
-compare_scenarios(list(reversed(result_files)), comp_filename)
+        compare_scenarios(list(reversed(result_files)), comp_filename)
