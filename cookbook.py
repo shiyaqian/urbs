@@ -69,7 +69,7 @@ def scen_chpprop(process, Eleceff):
         data['process_commodity'].loc[(process, 'Elec', 'Out'), 'ratio'] = (
                 Eleceff)
         data['process_commodity'].loc[(process, 'HeatHigh', 'Out'), 'ratio'] = (
-                0.85 - Eleceff)
+                1 - 1.5 * Eleceff)
         return data
 
     scenario.__name__ = 'scenario_CHP-elec-' + '{:04.4f}'.format(value)
@@ -128,6 +128,8 @@ def scen_chppropgasprice(process, site, value1, value2):
     def scenario(data):
         data['process_commodity'].loc[(process, 'Elec', 'Out'), 'ratio'] = (
                 value1)
+        data['process_commodity'].loc[(process, 'HeatHigh', 'Out'), 'ratio'] = (
+                1 - 1.5 * value1)
         data['commodity'].loc[(site, 'Gas', 'Stock'), 'price'] = value2
         return data
 
@@ -143,6 +145,8 @@ def scen_chppropco2price(process, site, eleceff, co2price):
     def scenario(data):
         data['process_commodity'].loc[(process, 'Elec', 'Out'), 'ratio'] = (
                 eleceff)
+        data['process_commodity'].loc[(process, 'HeatHigh', 'Out'), 'ratio'] = (
+                1 - 1.5 * eleceff)
         data['commodity'].loc[(site, 'CO2', 'Env'), 'price'] = co2price
         return data
 

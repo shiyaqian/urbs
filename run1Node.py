@@ -103,7 +103,7 @@ if __name__ == '__main__':
     result_dir = prepare_result_directory(result_name)  # name + time stamp
 
     # simulation timesteps
-    (offset, length) = (1000, 7*24)  # time step selection
+    (offset, length) = (1, 8759)  # time step selection
     timesteps = range(offset, offset+length+1)
 
     # plotting commodities/sites
@@ -135,7 +135,7 @@ if __name__ == '__main__':
 
     # select scenarios to be run
     scenarios = cookbook.scen_2d_linlog10paramvar(cookbook.scen_chppropco2price, 
-            'Gas plant', 0.25, 0.55, 2, 'Campus', 1, 3, 2)
+            'Gas plant', 0.25, 0.55, 5, 'Campus', 1, 3, 3)
 
     for scenario in scenarios:
         prob = run_scenario(input_file, timesteps, scenario, result_dir,

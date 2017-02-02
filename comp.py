@@ -182,11 +182,15 @@ def compare_scenarios(result_files, output_filename):
     # one column. But for presentational (legend) reasons, splitting the 
     # single column 'Storage retreived' into two columns, one for each
     # commodity, allows for separate styling (i.e. legend entries).
-    sto_sums = sto_sums = pd.concat([sto_sums, sto_sums], axis=1)
-    sto_sums.columns = ['Ice Storage', 'Reservoir']
+    sto_sums = sto_sums = pd.concat([sto_sums, sto_sums, sto_sums], axis=1)
+    sto_sums.columns = ['Reservoir', 'Battery', 'Ice Storage']
     sto_sums = sto_sums.sort_index()
-    sto_sums.loc[(slice(None), 'Cold'), 'Reservoir'] = 0
     sto_sums.loc[(slice(None), 'Heat'), 'Ice Storage'] = 0
+    sto_sums.loc[(slice(None), 'Heat'), 'Battery'] = 0
+    sto_sums.loc[(slice(None), 'Elec'), 'Reservoir'] = 0
+    sto_sums.loc[(slice(None), 'Elec'), 'Ice Storage'] = 0
+    sto_sums.loc[(slice(None), 'Cold'), 'Reservoir'] = 0
+    sto_sums.loc[(slice(None), 'Cold'), 'Battery'] = 0
     sto_sums = sto_sums.sort_index(ascending=[False, True])
     
     # remove CO2 from bar charts
