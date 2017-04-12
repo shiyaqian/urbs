@@ -8,7 +8,7 @@ from pyomo.opt.base import SolverFactory
 
 # SCENARIO GENERATORS
 
-# Commodity prices
+# Commodity
 
 def scen_co2price(site, co2price):
     # site = string; Site where the value should be changed.
@@ -18,7 +18,7 @@ def scen_co2price(site, co2price):
         data['commodity'].loc[(site, 'CO2', 'Env'), 'price'] = co2price
         return data
 
-    scenario.__name__ = 'scenario_CO2-price-' + '{:04}'.format(value)
+    scenario.__name__ = 'scenario_CO2-price-' + '{:04}'.format(co2price)
     # used for result filenames
     return scenario
 
@@ -55,8 +55,34 @@ def scen_geothprice(site, geothprice):
                 geothprice)
         return data
 
-    scenario.__name__ = 'scenario_GT-price-' + '{:04}'.format(value)
+    scenario.__name__ = 'scenario_GT-price-' + '{:04}'.format(geothprice)
     # used for result filenames
+    return scenario
+
+
+# Process
+
+def scen_proprop(site, process, property, value):
+    # property variation for given process
+
+    def scenario(data):
+        data['process'].loc[(site, process), 'property'] = value
+        return data
+
+    scenario.__name__ = 'scenario_' + process + property + '{:04}'.format(value)
+    return scenario
+
+
+def scen_2proprop(site, process1, process2, property, value):
+    # property variation for 2 given processes
+
+    def scenario(data):
+        data['process'].loc[(site, process1), property] = value
+        data['process'].loc[(site, process2), property] = value
+        return data
+
+    scenario.__name__ = ('scenario_' + process1 + process2 + property + 
+    '{:04}'.format(value))
     return scenario
 
 
@@ -103,7 +129,8 @@ def scen_gasgeothprice(site1, site2, value1, value2):
         data['commodity'].loc[(site2, 'Geothermal', 'Stock'), 'price'] = value2
         return data
 
-    scenario.__name__ = 'scenario_Gas-price-' + '{:04}'.format(value1) + '-GT-price-' + '{:04}'.format(value2)
+    scenario.__name__ = ('scenario_Gas-price-' + '{:04}'.format(value1) +
+                         '-GT-price-' + '{:04}'.format(value2))
     # used for result filenames
     return scenario
 
