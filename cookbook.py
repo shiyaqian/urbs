@@ -8,6 +8,11 @@ from pyomo.opt.base import SolverFactory
 
 # SCENARIO GENERATORS
 
+def scen_base(data):
+    # Take data as given.
+    return(data)
+
+
 # Commodity
 
 def scen_co2price(site, co2price):
@@ -62,19 +67,21 @@ def scen_geothprice(site, geothprice):
 
 # Process
 
-def scen_proprop(site, process, property, value):
-    # property variation for given process
+def process1(site, process, property, value):
+    # Property variation in the process sheet.
+    # site, process and property have to be given as a string.
 
     def scenario(data):
-        data['process'].loc[(site, process), 'property'] = value
+        data['process'].loc[(site, process), property] = value
         return data
 
-    scenario.__name__ = 'scenario_' + process + property + '{:04}'.format(value)
+    scenario.__name__ = ('scenario_' + process + property +
+                         '{:04}'.format(value))
     return scenario
 
 
-def scen_2proprop(site, process1, process2, property, value):
-    # property variation for 2 given processes
+def process2(site, process1, process2, property, value):
+    # Variation of 2 properties in the process sheet.
 
     def scenario(data):
         data['process'].loc[(site, process1), property] = value

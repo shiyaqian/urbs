@@ -1,7 +1,27 @@
 import math
-import pyomo.core as pyomo
+#import pyomo.core as pyomo
 from datetime import datetime
 from .modelhelper import *
+from pyomo.environ import (ConcreteModel, Var, Objective,
+                           NonNegativeReals, Constraint, Reals,
+                           Suffix, Expression, Binary)
+from pyomo.opt import SolverFactory
+from itertools import chain
+
+import logging
+logger = logging.getLogger(__name__)
+
+
+from distutils.version import StrictVersion, LooseVersion
+try:
+    _pd_version = StrictVersion(pd.__version__)
+except ValueError:
+    _pd_version = LooseVersion(pd.__version__)
+
+from .opt import (l_constraint, l_objective, LExpression, LConstraint,
+                  patch_optsolver_free_model_before_solving,
+                  patch_optsolver_record_memusage_before_solving,
+                  empty_network)
 
 
 def create_model(data, timesteps=None, dt=1, dual=False):
@@ -378,7 +398,7 @@ def create_model(data, timesteps=None, dt=1, dual=False):
     # their name in the "rule" keyword.
 
     # commodity
-    m.res_vertex = pyomo.Constraint(
+    l_constraint(m, res_vertex,
         m.tm, m.com_tuples,
         rule=res_vertex_rule,
         doc='storage + transmission + process + source + buy - sell == demand')
