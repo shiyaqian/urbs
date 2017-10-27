@@ -490,7 +490,7 @@ def create_model(data, timesteps=None, dt=1, dual=False):
         m.tm, m.pro_partial_input_tuples,
         rule=def_partial_process_input_rule,
         doc='e_pro_in = '
-            ' cap_online * min_fraction * (r - R) / (1 - min_fraction)'
+            ' cap_pro * min_fraction * (r - R) / (1 - min_fraction)'
             ' + tau_pro * (R - min_fraction * r) / (1 - min_fraction)')
     m.def_partial_process_output = pyomo.Constraint(
         m.tm, m.pro_partial_output_tuples,
@@ -905,7 +905,7 @@ def def_partial_process_output_rule(m, tm, sit, pro, coo):
     throughput_factor = (R - min_fraction * r) / (1 - min_fraction)
 
     return (m.e_pro_out[tm, sit, pro, coo] ==
-            m.cap_pro[sit, pro] * online_factor +
+            m.cap_online[sit, pro] * online_factor +
             m.tau_pro[tm, sit, pro] * throughput_factor)
 
 

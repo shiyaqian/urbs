@@ -323,7 +323,7 @@ With this new variable, urbs can detect the energy consumption of a process at
 the starting point and put start-up costs on it. Like the variable costs these
 start-up costs are per unit of energy.
 
-For a part load case the input ratio and, if specified, the output ratio of the
+For a part load case the input ratio and of the
 process is a function of :math:`\tau_{vpt}`:
 
 .. math::
@@ -351,19 +351,50 @@ input ratio:
 .. literalinclude:: /../urbs/model.py
    :pyobject: def_partial_process_input_rule
 
-For a given process capacity :math:`\kappa_{vp}` the efficiency of the process
-is then only dependent on the process throughput :math:`\tau_{vpt}`. The
-input (or output) ratio varies then linearly between :math:`r^{in}_{pc}` and
-:math:`r^{in}_{pc}` for throughputs in the desired operational region, i.e.,
-between full load :math:`\kappa_{vp}` and the minimal part load state
+To get a reasonably realistic behavior by reducing the efficiency for process
+states with low online capacity :math`\omega_{vpt}`, the output ratio is set as
+a function of both the online capacity :math:`\omega_{vpt}` and the process
+troughput :math:`\tau_{vpt}` in the following way for part load processes:
+
+.. math::
+    \forall t\in T_\text{m}, (v, p, c)\in C_{vp}^\text{out,partial}\colon\  
+    \epsilon_{vpct}^\text{out} = 
+      \omega_{vpt} \cdot \frac{
+          \underline{r}_{pc}^\text{out} - r_{pc}^\text{out}}{
+          1 - \underline{P}_{vp}} \cdot \underline{P}_{vp} 
+    + \tau_{vpt} \cdot \frac{
+        r_{pc}^\text{out} - 
+          \underline{P}_{vp} 
+          \underline{r}_{pc}^\text{out}}{
+        1 - \underline{P}_{vp}}
+
+In the program code this expression is written in the following way for the
+input ratio:
+::
+
+    m.def_partial_process_input = pyomo.Constraint(
+        m.tm, m.pro_partial_output_tuples,
+        rule=def_partial_process_output_rule,
+        doc='e_pro_out = cap_online * min_fraction * (r - R) / (1 - min_fraction)'
+                     '+ tau_pro * (R - min_fraction * r) / (1 - min_fraction)')
+
+.. literalinclude:: /../urbs/model.py
+   :pyobject: def_partial_process_output_rule
+
+The input (or output) ratio varies then linearly between :math:`r^{in}_{pc}`
+and :math:`r^{in}_{pc}` for throughputs in the desired operational region,
+i.e., between full load :math:`\kappa_{vp}` and the minimal part load state
 :math:`\kappa_{vp}\underline P_{vp}`. The efficiency is then of the form:
 
 .. math::
-    \eta = \frac{\epsilon_{vpct}^\text{out}}{\epsilon_{vpct}^\text{in}} =
-    \frac{a + b \tau_{vpt}}{c + d \tau_{vpt}}
+    \eta \leq \frac{\epsilon_{vpct}^\text{out}}{\epsilon_{vpct}^\text{in}} =
+    \frac{a + b \tau_{vpt}}{c + d \tau_{vpt}},
 
-Note that :math:`\underline{r}>r` has to be valid for all in- and output ratios
-since otherwise negative energy in-/outputs and thus wrong results would occur.  
+where equality holds for :math:`\omega_{vpt}=\kappa_{vp}`. In this case the
+efficiency of the process is then only dependent on the process throughput 
+:math:`\tau_{vpt}`. Note that :math:`\underline{r}>r` has to be valid for all
+in- and output ratios since otherwise negative energy in-/outputs and thus
+wrong results would occur.  
 
 **Online Capacity By Process Capacity Rule** limits the value of the online
 capacity :math:`\omega_{vpt}` by the total installed process capacity
