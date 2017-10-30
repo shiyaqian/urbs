@@ -66,10 +66,13 @@ def read_excel(filename):
         'dsm': dsm
         }
 
-    for index in data['process_commodity']['ratio'].index:
-        if (data['process_commodity'].loc[index]['ratio'] >
-            data['process_commodity'].loc[index]['ratio-min']):
-            raise ValueError('ratio-min must be larger than ratio!')
+    for index in (data['process_commodity'].xs('In', level='Direction')
+                  ['ratio-min'].index):
+        if (data['process_commodity'].xs('In', level='Direction')
+                                     .loc[index]['ratio'] >
+            data['process_commodity'].xs('In', level='Direction')
+                                     .loc[index]['ratio-min']):
+            raise ValueError('ratio-min must be larger than ratio for inputs!')
 
     # sort nested indexes to make direct assignments work
     for key in data:

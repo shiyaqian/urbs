@@ -392,9 +392,9 @@ i.e., between full load :math:`\kappa_{vp}` and the minimal part load state
 
 where equality holds for :math:`\omega_{vpt}=\kappa_{vp}`. In this case the
 efficiency of the process is then only dependent on the process throughput 
-:math:`\tau_{vpt}`. Note that :math:`\underline{r}>r` has to be valid for all
-in- and output ratios since otherwise negative energy in-/outputs and thus
-wrong results would occur.  
+:math:`\tau_{vpt}`. Note that :math:`\underline{r}^\text{in}>r^\text{in}` has
+to be valid for the input ratios since otherwise negative energy in-/outputs
+and thus wrong results would occur.  
 
 **Online Capacity By Process Capacity Rule** limits the value of the online
 capacity :math:`\omega_{vpt}` by the total installed process capacity
