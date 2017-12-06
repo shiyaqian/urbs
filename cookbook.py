@@ -126,8 +126,8 @@ def sc_2procomprop(process1, process2, com1, com2, dir1, dir2, property1,
     # variation of 2 properties of 2 given process-commodity
 
     def scenario(data):
-        data['process-commodity'].loc[(site1, process1), property1] = value1
-        data['process-commodity'].loc[(site2, process2), property2] = value2
+        data['process-commodity'].loc[(process1, com1, dir1), property1] = value1
+        data['process-commodity'].loc[(process2, com2, dir2), property2] = value2
         return data
 
     scenario.__name__ = ('scenario_' + process1 + com1 + dir1 + property1 +
@@ -165,4 +165,55 @@ def sc_2stoprop(site1, site2, sto1, sto2, com1, com2, property1,
                          '{:04}'.format(value1) + site2 + sto2 + com2 +
                          property2 + '{:04}'.format(value2)
                          )
+    return scenario
+
+    # CO2_limits with Commodity Change
+def sc_1comprop_co2Limit(site, com, type, property, value1, value2):
+    # variation of 1 property of 1 given commodity
+
+    def scenario(data):
+        data['commodity'].loc[(site, com, type), property] = value1
+        data['global_prop'].loc['CO2 limit', 'value'] = value2
+        return data
+
+    scenario.__name__ = ('scenario_' + site + com + property +
+                         '{:04}'.format(value1) + 'scenario_CO2-limit-' + '{:04}'.format(value2)
+                         )
+
+    return scenario
+
+def sc_1comprop_co2Limit_ohneW(site1, com1, type1, property1, value1,
+                         site2, process2, property2, value2,
+                         site3, process3, property3, value3,
+                         site4, process4, property4, value4,
+                         site5, process5, property5, value5,
+                         site6, process6, property6, value6,
+                         site7, process7, property7, value7,
+                         site8, process8, property8, value8,
+                         site9, process9, property9, value9,
+                         site10, process10, property10, value10,
+                         site11, process11, property11, value11,
+                         site12, process12, property12, value12, value13):
+    # variation of 1 property of 1 given commodity
+
+    def scenario(data):
+        data['commodity'].loc[(site1, com1, type1), property1] = value1
+        data['process'].loc[(site2, process2), property2] = value2
+        data['process'].loc[(site3, process3), property3] = value3
+        data['process'].loc[(site4, process4), property4] = value4
+        data['process'].loc[(site5, process5), property5] = value5
+        data['process'].loc[(site6, process6), property6] = value6
+        data['process'].loc[(site7, process7), property7] = value7
+        data['process'].loc[(site8, process8), property8] = value8
+        data['process'].loc[(site9, process9), property9] = value9
+        data['process'].loc[(site10, process10), property10] = value10
+        data['process'].loc[(site11, process11), property11] = value11
+        data['process'].loc[(site12, process12), property12] = value12
+        data['global_prop'].loc['CO2 limit', 'value'] = value13
+        return data
+
+    scenario.__name__ = ('scenario_' + site1 + com1 + property1 +
+                         '{:04}'.format(value1) + 'scenario_CO2-limit-' + '{:04}'.format(value13)
+                         )
+
     return scenario
